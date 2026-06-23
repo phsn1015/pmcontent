@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sneller & Co — Human as a Service</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a1a2e;
+      --gold: #e8a838;
+      --gold-light: #f5c96a;
+      --cream: #faf8f4;
+      --gray: #666;
+      --light-gray: #f2f2f2;
+      --white: #fff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Georgia', serif;
+      color: var(--navy);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(26,26,46,0.97);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .nav-logo {
+      font-family: 'Georgia', serif;
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--gold);
+      color: var(--navy);
+      text-decoration: none;
+      padding: 9px 20px;
+      border-radius: 5px;
+      transition: background 0.2s;
+    }
+
+    .nav-cta:hover { background: var(--gold-light); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      padding: 100px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,168,56,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: bold;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+      margin-bottom: 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      background: var(--gold);
+      color: var(--navy);
+      text-decoration: none;
+      padding: 15px 32px;
+      border-radius: 6px;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+    .btn-ghost {
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      padding: 15px 32px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+
+    /* Stats card on hero right */
+    .hero-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 40px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-number {
+      font-size: 42px;
+      font-weight: bold;
+      color: var(--gold);
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .stat-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 32px 0;
+    }
+
+    .hero-card p {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* SERVICES */
+    .services {
+      padding: 100px 40px;
+      background: var(--cream);
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: bold;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 56px;
+      letter-spacing: -0.5px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .service-card {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 36px;
+      border: 1px solid #e8e8e8;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .service-card:hover {
+      box-shadow: 0 8px 32px rgba(26,26,46,0.1);
+      transform: translateY(-3px);
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--navy);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .service-card h3 {
+      font-size: 19px;
+      font-weight: bold;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .service-card p {
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* HOW IT WORKS */
+    .how {
+      padding: 100px 40px;
+      background: var(--white);
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      margin-top: 56px;
+      position: relative;
+    }
+
+    .how-grid::before {
+      content: '';
+      position: absolute;
+      top: 24px; left: calc(12.5% + 24px); right: calc(12.5% + 24px);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold) 15%, var(--gold) 85%, transparent);
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--navy);
+      border: 3px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+      margin: 0 auto 20px;
+    }
+
+    .step h4 {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+
+    /* CTA SECTION */
+    .cta-section {
+      padding: 100px 40px;
+      background: var(--navy);
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: bold;
+      color: var(--white);
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .cta-section p {
+      font-family: Arial, sans-serif;
+      font-size: 17px;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 40px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      background: #111122;
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    footer p {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    footer a {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+    }
+
+    footer a:hover { color: var(--gold); }
+
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .how-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .how-grid::before { display: none; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+      .hero, .services, .how, .cta-section { padding-left: 20px; padding-right: 20px; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo">Sneller <span>&</span> Co</a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Let's talk</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <p class="hero-eyebrow">Human as a Service</p>
+        <h1>Marketing work,<br>actually <em>done.</em></h1>
+        <p>Sneller & Co is a one-person marketing operation. Email, web, automation, content. I do the work directly, not through layers of project managers and account reps.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn-primary">Get in touch</a>
+          <a href="#services" class="btn-ghost">What I do</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div style="padding: 8px 0 24px;">
+          <p style="margin:0 0 6px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;">What clients say</p>
+          <p style="margin:0;font-size:16px;color:rgba(255,255,255,0.85);line-height:1.7;font-style:italic;">"Philip just gets it done. We'd been through two agencies before him and the difference was immediate."</p>
+        </div>
+        <hr class="stat-divider">
+        <p style="font-family:Arial,sans-serif;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;">I keep a small client roster on purpose. It's the only way to actually stay in the work instead of just managing it from above.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="services">
+    <div class="section-inner">
+      <p class="section-label">What I do</p>
+      <h2 class="section-title">Marketing work that<br>actually gets finished.</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">✉</div>
+          <h3>Email Marketing</h3>
+          <p>I build email programs from the ground up or work with what's already there. Strategy, copy, design, deployment — whatever the job needs. I've worked mainly in Brevo and Zoho Campaigns. I can pick up other platforms quickly but those are where I've spent most of my time.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">⚡</div>
+          <h3>Automation</h3>
+          <p>Welcome sequences, re-engagement flows, cart recovery, post-purchase follow-up. Set up right the first time, these run without needing anyone to babysit them.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌐</div>
+          <h3>Web Updates & Builds</h3>
+          <p>Landing pages, campaign pages, ongoing site maintenance. I write clean HTML and CSS and can work in most CMSes. I turn things around fast and don't need hand-holding on requirements.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📊</div>
+          <h3>Copy & Content</h3>
+          <p>Email copy, web copy, blog posts. I try to write in the client's voice, which means I ask questions first and write second. Takes longer but the output is actually usable.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎯</div>
+          <h3>Campaign Planning</h3>
+          <p>Before anything gets built, I want to know who we're talking to and what we actually want them to do. The strategy comes first. Everything else — when it goes out, where, what it says — follows from that.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📈</div>
+          <h3>Reporting</h3>
+          <p>I send a weekly note covering what went out, what the numbers looked like, and what I'm working on. I skip the vanity metrics. If something's underperforming I'll flag it directly rather than burying it in a chart.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="how">
+    <div class="section-inner">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">How we get started.</h2>
+      <div class="how-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Send me a note</h4>
+          <p>Tell me what you're working on and what you need help with. The intake form takes a few minutes. I read every one before we talk.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>We get on a call</h4>
+          <p>I'll ask questions and figure out what's actually needed. If I think something's a waste of time or money, I'll say so.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>I start working</h4>
+          <p>First deliverable usually comes back within a couple of days. You give feedback, I revise, we keep moving.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>We adjust as we go</h4>
+          <p>Things run, we check in weekly, and we change direction when something isn't working. No rigid scope to defend.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="contact" class="cta-section">
+    <h2>Let's talk.</h2>
+    <p>Send me an email and tell me what you're working on. We'll figure out from there if it makes sense to work together.</p>
+    <a href="mailto:hello@snellerandco.com" class="btn-primary">hello@snellerandco.com</a>
+  </section>
+
+  <footer>
+    <p>© 2026 Sneller & Co. All rights reserved.</p>
+    <a href="mailto:hello@snellerandco.com">hello@snellerandco.com</a>
+  </footer>
+
+</body>
+</html>

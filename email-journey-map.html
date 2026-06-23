@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Journey Map — New Client Onboarding</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a1a2e;
+      --gold: #e8a838;
+      --green: #2d8a4e;
+      --green-light: #e8f4ee;
+      --purple: #6c63ff;
+      --purple-light: #f0effe;
+      --red: #c0392b;
+      --red-light: #fdf0ee;
+      --blue: #2471a3;
+      --blue-light: #eaf4fb;
+      --gray: #666;
+      --light: #f7f7f9;
+      --border: #e2e2e8;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--light);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    /* TOP HEADER */
+    .doc-header {
+      background: var(--navy);
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .doc-header h1 {
+      font-family: Georgia, serif;
+      font-size: 26px;
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+    }
+
+    .doc-header p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 6px;
+    }
+
+    .doc-meta {
+      text-align: right;
+    }
+
+    .doc-meta p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.8;
+    }
+
+    .doc-meta span {
+      color: var(--gold);
+    }
+
+    /* LEGEND */
+    .legend-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 48px;
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .legend-bar p {
+      font-size: 11px;
+      font-weight: 700;
+      color: #999;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-right: 4px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* JOURNEY CANVAS */
+    .canvas {
+      padding: 48px;
+      overflow-x: auto;
+    }
+
+    /* PHASE ROWS */
+    .phase-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0;
+      margin-bottom: 0;
+    }
+
+    .phase-label {
+      padding: 0 24px 0 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 24px;
+    }
+
+    .phase-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      width: fit-content;
+    }
+
+    .phase-desc {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.5;
+    }
+
+    .phase-emails {
+      display: flex;
+      gap: 0;
+      position: relative;
+      padding-bottom: 40px;
+    }
+
+    /* CONNECTOR LINE */
+    .phase-emails::before {
+      content: '';
+      position: absolute;
+      top: 44px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    /* EMAIL CARD */
+    .email-card {
+      flex: 1;
+      min-width: 180px;
+      max-width: 240px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0;
+      position: relative;
+      z-index: 1;
+      margin: 0 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s, transform 0.2s;
+      cursor: default;
+    }
+
+    .email-card:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .card-top {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    .day-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 3px;
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    .card-type {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .card-subject {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.35;
+    }
+
+    .card-body {
+      padding: 14px 18px;
+    }
+
+    .card-body p {
+      font-size: 12px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .meta-chip {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #bbb;
+    }
+
+    .stat-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* PHASE COLORS */
+    /* Awareness */
+    .phase-awareness .phase-tag { background: var(--blue-light); color: var(--blue); }
+    .phase-awareness .phase-emails::before { background: #d5eaf6; }
+    .phase-awareness .email-card { border-color: #c5e0f0; }
+    .phase-awareness .day-badge { background: var(--blue); }
+    .phase-awareness .card-type { color: var(--blue); }
+
+    /* Activation */
+    .phase-activation .phase-tag { background: var(--green-light); color: var(--green); }
+    .phase-activation .phase-emails::before { background: #c5e5d2; }
+    .phase-activation .email-card { border-color: #b5dcc8; }
+    .phase-activation .day-badge { background: var(--green); }
+    .phase-activation .card-type { color: var(--green); }
+
+    /* Engagement */
+    .phase-engagement .phase-tag { background: var(--purple-light); color: var(--purple); }
+    .phase-engagement .phase-emails::before { background: #dddcff; }
+    .phase-engagement .email-card { border-color: #cecbff; }
+    .phase-engagement .day-badge { background: var(--purple); }
+    .phase-engagement .card-type { color: var(--purple); }
+
+    /* Re-engagement */
+    .phase-reengagement .phase-tag { background: #fff4e8; color: #c87d20; }
+    .phase-reengagement .phase-emails::before { background: #f5ddb8; }
+    .phase-reengagement .email-card { border-color: #f0d4a8; }
+    .phase-reengagement .day-badge { background: #c87d20; }
+    .phase-reengagement .card-type { color: #c87d20; }
+
+    /* SECTION DIVIDER */
+    .phase-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 0 0 40px;
+    }
+
+    /* METRICS ROW */
+    .metrics-section {
+      background: var(--navy);
+      padding: 40px 48px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: Georgia, serif;
+      font-size: 38px;
+      font-weight: bold;
+      color: var(--gold);
+      letter-spacing: -1px;
+      margin-bottom: 4px;
+    }
+
+    .metric-name {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
+    }
+
+    /* NOTES TABLE */
+    .notes-section {
+      padding: 48px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+    }
+
+    .notes-section h3 {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--navy);
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 16px;
+      background: var(--light);
+      color: #999;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 12px 16px;
+      color: var(--gray);
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    td:first-child { color: var(--navy); font-weight: 600; }
+
+    @media (max-width: 900px) {
+      .canvas { padding: 24px 16px; }
+      .phase-row { grid-template-columns: 1fr; }
+      .phase-label { padding: 0 0 16px; flex-direction: row; align-items: center; gap: 12px; }
+      .phase-emails { flex-wrap: wrap; }
+      .metrics-section { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .doc-header { flex-direction: column; gap: 16px; }
+      .doc-meta { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div>
+      <h1>Email Journey Map</h1>
+      <p>New Client Onboarding — Sneller & Co Agency</p>
+    </div>
+    <div class="doc-meta">
+      <p>Prepared by: <span>Philip Sneller</span></p>
+      <p>Audience: <span>New agency clients</span></p>
+      <p>ESP: <span>Brevo</span></p>
+      <p>Journey length: <span>60 days</span></p>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend-bar">
+    <p>Key:</p>
+    <div class="legend-item"><div class="legend-dot" style="background:#2471a3;"></div> Awareness</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#2d8a4e;"></div> Activation</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#6c63ff;"></div> Engagement</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#c87d20;"></div> Re-engagement</div>
+    <div class="legend-item" style="margin-left:auto;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="#e8a838" stroke-width="1.5"/><path d="M4 7h6M7 4v6" stroke="#e8a838" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>Conditional branch</span>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas">
+
+    <!-- PHASE 1: AWARENESS -->
+    <div class="phase-row phase-awareness">
+      <div class="phase-label">
+        <span class="phase-tag">Awareness</span>
+        <span class="phase-desc">Days 0–3<br>Get them grounded, set the tone.</span>
+      </div>
+      <div class="phase-emails">
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 0 — Trigger: Sign-up</span>
+            <p class="card-type">Welcome</p>
+            <p class="card-subject">Welcome to Sneller & Co. Here's how this works.</p>
+          </div>
+          <div class="card-body">
+            <p>Sent immediately on sign-up. Explains what to expect, links to the call scheduler, and sets a tone for how I communicate. Gets opened because it's relevant right when they need it.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#eaf4fb;color:#2471a3;">Immediate</span>
+              <span class="meta-chip" style="background:#eaf4fb;color:#2471a3;">Transactional</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">72%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Book call</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 1</span>
+            <p class="card-type">Introduction</p>
+            <p class="card-subject">Your first week with us — what to expect</p>
+          </div>
+          <div class="card-body">
+            <p>Covers what's going to happen in the first week. I also try to answer the questions I know clients have at this point but usually don't ask — keeps the back and forth down.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#eaf4fb;color:#2471a3;">Informational</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">43%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Review plan</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 3</span>
+            <p class="card-type">Social proof</p>
+            <p class="card-subject">What our clients say after week one</p>
+          </div>
+          <div class="card-body">
+            <p>Two short client quotes from people who were in the same spot. If they haven't booked their kick-off call yet, this gives them a nudge. Conditional on whether the call is booked.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#eaf4fb;color:#2471a3;">Nurture</span>
+              <span class="meta-chip" style="background:#eaf4fb;color:#2471a3;">Conditional</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">44%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Book call</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="phase-divider">
+
+    <!-- PHASE 2: ACTIVATION -->
+    <div class="phase-row phase-activation">
+      <div class="phase-label">
+        <span class="phase-tag">Activation</span>
+        <span class="phase-desc">Days 7–14<br>First real delivery and first check-in.</span>
+      </div>
+      <div class="phase-emails">
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 7</span>
+            <p class="card-type">Milestone</p>
+            <p class="card-subject">Week 1 is done. Here's what we shipped.</p>
+          </div>
+          <div class="card-body">
+            <p>Lists everything that went out in week one. Opens well because it's specific to their account. This one matters early on — clients need to see momentum.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#e8f4ee;color:#2d8a4e;">Milestone</span>
+              <span class="meta-chip" style="background:#e8f4ee;color:#2d8a4e;">Personalized</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">61%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">View update</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 10</span>
+            <p class="card-type">Education</p>
+            <p class="card-subject">Why your welcome email is doing the heavy lifting</p>
+          </div>
+          <div class="card-body">
+            <p>Short piece on why welcome emails carry as much weight as they do. It's educational but it's also a way of showing I think about the why, not just the what.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#e8f4ee;color:#2d8a4e;">Value</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">38%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Read more</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 14</span>
+            <p class="card-type">Check-in</p>
+            <p class="card-subject">Two weeks in — quick check-in</p>
+          </div>
+          <div class="card-body">
+            <p>Short email, just from me. One question: what do they want to focus on next month. Reply rate on this one is solid because it's short and actually asks for something real.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#e8f4ee;color:#2d8a4e;">Relationship</span>
+              <span class="meta-chip" style="background:#e8f4ee;color:#2d8a4e;">Reply trigger</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Reply rate</p><p class="stat-val">22%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Reply to email</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="phase-divider">
+
+    <!-- PHASE 3: ENGAGEMENT -->
+    <div class="phase-row phase-engagement">
+      <div class="phase-label">
+        <span class="phase-tag">Engagement</span>
+        <span class="phase-desc">Days 21–45<br>Show the ROI, open the door to more.</span>
+      </div>
+      <div class="phase-emails">
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 21</span>
+            <p class="card-type">Performance</p>
+            <p class="card-subject">Your month-1 numbers (with context)</p>
+          </div>
+          <div class="card-body">
+            <p>Month-one summary delivered as an email with a link to the full report. Important send — this is where clients decide whether they're getting value or not.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Retention</span>
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Personalized</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">55%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">View report</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 30</span>
+            <p class="card-type">Expansion</p>
+            <p class="card-subject">One thing we think you're leaving on the table</p>
+          </div>
+          <div class="card-body">
+            <p>Points out something I've noticed that's not being addressed. Not a hard sell — more of a 'here's what I'm seeing, want to talk about it.' Segmented based on what's actually missing for each client.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Upsell</span>
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Conditional</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">41%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Let's talk</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 45</span>
+            <p class="card-type">Testimonial ask</p>
+            <p class="card-subject">Would you be willing to share a few words?</p>
+          </div>
+          <div class="card-body">
+            <p>Only goes to clients who are clearly happy with the work. Asks for a few sentences or a referral. Works because it's targeted — I'm not blasting everyone.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Advocacy</span>
+              <span class="meta-chip" style="background:#f0effe;color:#6c63ff;">Segmented</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Conversion</p><p class="stat-val">18%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Leave review</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="phase-divider">
+
+    <!-- PHASE 4: RE-ENGAGEMENT -->
+    <div class="phase-row phase-reengagement">
+      <div class="phase-label">
+        <span class="phase-tag">Re-engagement</span>
+        <span class="phase-desc">Days 50–60<br>If things have gone quiet.</span>
+      </div>
+      <div class="phase-emails">
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 50 — If: no opens in 21d</span>
+            <p class="card-type">Re-engage</p>
+            <p class="card-subject">Still there? Quick question.</p>
+          </div>
+          <div class="card-body">
+            <p>Two sentences. Asks directly what's going on. Only sent to people who haven't opened in three weeks. Subject line is tested — we've tried a few variations.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#fff4e8;color:#c87d20;">Win-back</span>
+              <span class="meta-chip" style="background:#fff4e8;color:#c87d20;">Conditional</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Avg open</p><p class="stat-val">28%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Reply</p></div>
+          </div>
+        </div>
+
+        <div class="email-card">
+          <div class="card-top">
+            <span class="day-badge">Day 55 — If: still no response</span>
+            <p class="card-type">Final touch</p>
+            <p class="card-subject">We're going to close out your account — unless you'd like to continue</p>
+          </div>
+          <div class="card-body">
+            <p>Tells them their account is being closed out and gives them a clear way back in. If nothing happens in 5 days, they're removed from active flows.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#fff4e8;color:#c87d20;">Sunset path</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Recovery rate</p><p class="stat-val">12%</p></div>
+            <div><p class="stat-label">CTA</p><p class="stat-val">Stay active</p></div>
+          </div>
+        </div>
+
+        <div class="email-card" style="border-style:dashed;background:#fafafa;">
+          <div class="card-top">
+            <span class="day-badge" style="background:#aaa;">Day 60 — Sunset</span>
+            <p class="card-type" style="color:#aaa;">Suppression</p>
+            <p class="card-subject" style="color:#aaa;">Contact suppressed from active journeys</p>
+          </div>
+          <div class="card-body">
+            <p style="color:#bbb;">No further sends. Contact moved to suppression list. Can be re-added manually if client re-engages through other channels.</p>
+            <div class="card-meta">
+              <span class="meta-chip" style="background:#f0f0f0;color:#aaa;">List hygiene</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div><p class="stat-label">Action</p><p class="stat-val" style="color:#aaa;">Suppress</p></div>
+            <div><p class="stat-label">Sends</p><p class="stat-val" style="color:#aaa;">0</p></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!-- /CANVAS -->
+
+  <!-- METRICS -->
+  <div class="metrics-section">
+    <div class="metric">
+      <p class="metric-value">11</p>
+      <p class="metric-name">Total emails in journey</p>
+    </div>
+    <div class="metric">
+      <p class="metric-value">60d</p>
+      <p class="metric-name">Journey length</p>
+    </div>
+    <div class="metric">
+      <p class="metric-value">~78%</p>
+      <p class="metric-name">Contacts active at Day 30</p>
+    </div>
+    <div class="metric">
+      <p class="metric-value">~19%</p>
+      <p class="metric-name">Avg reply rate on check-in</p>
+    </div>
+  </div>
+
+  <!-- NOTES TABLE -->
+  <div class="notes-section">
+    <h3>Segmentation &amp; branching logic</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Trigger condition</th>
+          <th>Action</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Day 3: Call not yet booked</td>
+          <td>Send Day 3 email with stronger CTA</td>
+          <td>Brevo automation condition on custom attribute "booked_call = false"</td>
+        </tr>
+        <tr>
+          <td>Day 14: Client replies</td>
+          <td>Tag contact "engaged," skip re-engagement branch</td>
+          <td>Reply detection via Brevo webhook + Zapier; tags contact in CRM</td>
+        </tr>
+        <tr>
+          <td>Day 30: Upsell conversation opened</td>
+          <td>Add to "Expansion Prospect" segment</td>
+          <td>Manual follow-up from Phil within 48 hours</td>
+        </tr>
+        <tr>
+          <td>Day 50: No opens in 21 days</td>
+          <td>Enter re-engagement branch</td>
+          <td>Brevo segment: "Last opened > 21 days" — filters into re-engagement automation</td>
+        </tr>
+        <tr>
+          <td>Day 60: No response to re-engagement</td>
+          <td>Suppress from active journeys</td>
+          <td>Added to suppression list; excluded from all future broadcasts</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>
